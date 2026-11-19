@@ -18,9 +18,6 @@ Instruction parseInstruction(
 
     std::smatch match;
 
-    // =====================================================
-    // loadI 5 => r1
-    // =====================================================
 
     const std::regex loadIRegex(
         R"(^loadI\s+(-?[0-9]+)\s*=>\s*(r[0-9]+)\s*$)"
@@ -45,13 +42,6 @@ Instruction parseInstruction(
         return instruction;
     }
 
-    // =====================================================
-    // loadAI r0,@x => r1
-    //
-    // También aceptamos:
-    //
-    // loadAI r0,4 => r1
-    // =====================================================
 
     const std::regex loadAIRegex(
         R"(^loadAI\s+(r[0-9]+)\s*,\s*(@?[A-Za-z_][A-Za-z0-9_]*|-?[0-9]+)\s*=>\s*(r[0-9]+)\s*$)"
@@ -86,9 +76,6 @@ Instruction parseInstruction(
         return instruction;
     }
 
-    // =====================================================
-    // storeAI r1 => r0,@x
-    // =====================================================
 
     const std::regex storeAIRegex(
         R"(^storeAI\s+(r[0-9]+)\s*=>\s*(r[0-9]+)\s*,\s*(@?[A-Za-z_][A-Za-z0-9_]*|-?[0-9]+)\s*$)"
@@ -127,16 +114,6 @@ Instruction parseInstruction(
         return instruction;
     }
 
-    // =====================================================
-    // Operaciones binarias:
-    //
-    // add r1,r2 => r3
-    // sub r1,r2 => r3
-    // mult r1,r2 => r3
-    // lshift r1,r2 => r3
-    // rshift r1,r2 => r3
-    // =====================================================
-
     const std::regex binaryRegex(
         R"(^(add|sub|mult|lshift|rshift)\s+(r[0-9]+)\s*,\s*(r[0-9]+)\s*=>\s*(r[0-9]+)\s*$)"
     );
@@ -166,11 +143,6 @@ Instruction parseInstruction(
             match[4].str()
         );
 
-        // Por ejemplo:
-        //
-        // add r1,r1 => r2
-        //
-        // No queremos registrar r1 dos veces.
         instruction.reads =
             uniqueVector(instruction.reads);
 
@@ -199,12 +171,10 @@ std::vector<Instruction> readInstructions() {
     while (std::getline(std::cin, line)) {
         line = trim(line);
 
-        // Ignorar líneas vacías.
         if (line.empty()) {
             continue;
         }
 
-        // Ignorar comentarios completos.
         if (line[0] == '#') {
             continue;
         }

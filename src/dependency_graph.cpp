@@ -8,7 +8,6 @@
 
 namespace {
 
-// Aristas
 
 void addEdge(
     std::vector<Instruction>& instructions,
@@ -32,8 +31,6 @@ void addEdge(
                 edge.delay = delay;
                 edge.type = type;
 
-                // Actualizar también la copia que está
-                // almacenada como predecessor.
                 for (
                     Edge& predecessor :
                     instructions[to].predecessors
@@ -70,22 +67,6 @@ void addEdge(
     );
 }
 
-// =========================================================
-// Determinar si dos accesos a memoria pueden entrar
-// en conflicto.
-//
-// Reglas del lab:
-//
-// load-load:
-//     nunca conflicto.
-//
-// misma base:
-//     mismo offset     -> conflicto
-//     distinto offset  -> no conflicto
-//
-// bases diferentes:
-//     asumir conflicto.
-// =========================================================
 
 bool memoryConflict(
     const Instruction& first,
@@ -104,18 +85,9 @@ bool memoryConflict(
         return first.offset == second.offset;
     }
 
-    // Bases distintas:
-    // asumir posible aliasing.
     return true;
 }
 
-// =========================================================
-// Prioridad recursiva:
-//
-// priority(n) =
-//     latency(n) +
-//     max(priority(successor))
-// =========================================================
 
 int computePriority(
     int node,
@@ -124,7 +96,6 @@ int computePriority(
     Instruction& instruction =
         instructions[node];
 
-    // Memoization.
     if (instruction.priority != -1) {
         return instruction.priority;
     }
@@ -152,11 +123,9 @@ int computePriority(
     return instruction.priority;
 }
 
-} // namespace
+} 
 
-// =========================================================
-// Construcción del grafo.
-// =========================================================
+
 
 void buildDependencyGraph(
     std::vector<Instruction>& instructions
@@ -170,9 +139,7 @@ void buildDependencyGraph(
         std::vector<int>
     > readersSinceWrite;
 
-    /*
-     * Instrucciones anteriores que accedieron a memoria.
-     */
+   
     std::vector<int> previousMemory;
 
     for (
@@ -190,14 +157,7 @@ void buildDependencyGraph(
         current.writes =
             uniqueVector(current.writes);
 
-        // =================================================
-        // RAW
-        //
-        // Una instrucción actual lee un registro producido
-        // por una instrucción anterior.
-        //
-        // WRITE -> READ
-        // =================================================
+       
 
         for (
             const std::string& reg :
@@ -222,27 +182,13 @@ void buildDependencyGraph(
             );
         }
 
-        // =================================================
-        // WAR y WAW
-        //
-        // Las dos aparecen cuando la instrucción actual
-        // escribe un registro.
-        // =================================================
+  
 
         for (
             const std::string& reg :
             current.writes
         ) {
-            // =============================================
-            // WAR
-            //
-            // READ -> WRITE
-            //
-            // Los lectores anteriores deben leer antes de
-            // que current sobrescriba el registro.
-            //
-            // delay = 1
-            // =============================================
+            
 
             auto readers =
                 readersSinceWrite.find(reg);
@@ -265,16 +211,7 @@ void buildDependencyGraph(
                 }
             }
 
-            // =============================================
-            // WAW
-            //
-            // WRITE -> WRITE
-            //
-            // Debemos conservar el orden de escrituras.
-            //
-            // delay = latencia del writer anterior.
-            // =============================================
-
+          
             auto previousWriter =
                 lastWriter.find(reg);
 
@@ -308,10 +245,7 @@ void buildDependencyGraph(
             readersSinceWrite[reg].clear();
         }
 
-        // =================================================
-        // Registrar las lecturas actuales.
-        // =================================================
-
+        
         for (
             const std::string& reg :
             current.reads
@@ -329,9 +263,6 @@ void buildDependencyGraph(
             }
         }
 
-        // =================================================
-        // DEPENDENCIAS DE MEMORIA
-        // =================================================
 
         if (
             current.isLoad ||
@@ -353,10 +284,6 @@ void buildDependencyGraph(
                     continue;
                 }
 
-                // =========================================
-                // STORE -> LOAD
-                // delay = lat(store)
-                // =========================================
 
                 if (
                     previous.isStore &&
@@ -371,10 +298,6 @@ void buildDependencyGraph(
                     );
                 }
 
-                // =========================================
-                // LOAD -> STORE
-                // delay = 1
-                // =========================================
 
                 else if (
                     previous.isLoad &&
@@ -389,10 +312,7 @@ void buildDependencyGraph(
                     );
                 }
 
-                // =========================================
-                // STORE -> STORE
-                // =========================================
-
+              
                 else if (
                     previous.isStore &&
                     current.isStore

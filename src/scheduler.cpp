@@ -16,7 +16,6 @@ bool isReady(
     const Instruction& instruction =
         instructions[node];
 
-    // Ya fue programada.
     if (instruction.scheduledCycle != -1) {
         return false;
     }
@@ -28,14 +27,12 @@ bool isReady(
         const Instruction& predecessor =
             instructions[edge.node];
 
-        // El predecesor todavía no ha sido programado.
         if (
             predecessor.scheduledCycle == -1
         ) {
             return false;
         }
 
-        // S(pred) + delay <= cycle
         if (
             predecessor.scheduledCycle +
             edge.delay >
@@ -90,12 +87,7 @@ std::vector<std::vector<int>> schedule(
             }
         }
 
-        // =================================================
-        // Ordenar Ready.
-        //
-        // 1. Mayor prioridad primero.
-        // 2. Empate -> instrucción original más temprana.
-        // =================================================
+       
 
         std::sort(
             ready.begin(),
@@ -117,10 +109,7 @@ std::vector<std::vector<int>> schedule(
             }
         );
 
-        // =================================================
-        // Podemos ejecutar como máximo <units>
-        // instrucciones en este ciclo.
-        // =================================================
+     
 
         const int amount =
             std::min(
@@ -174,11 +163,6 @@ int scheduleLength(
             );
     }
 
-    /*
-     * Definición del lab:
-     *
-     * max(S(n) + lat(n)) - 1
-     */
     return maximum - 1;
 }
 
