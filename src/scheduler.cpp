@@ -6,13 +6,7 @@
 
 namespace {
 
-// =========================================================
-// ¿Puede ejecutarse node en este ciclo?
-//
-// Para todos los predecesores:
-//
 // S(pred) + delay <= cycle
-// =========================================================
 
 bool isReady(
     int node,
@@ -41,11 +35,7 @@ bool isReady(
             return false;
         }
 
-        /*
-         * Debemos cumplir:
-         *
-         * S(pred) + delay <= cycle
-         */
+        // S(pred) + delay <= cycle
         if (
             predecessor.scheduledCycle +
             edge.delay >
@@ -74,14 +64,7 @@ std::vector<std::vector<int>> schedule(
     // El laboratorio empieza en ciclo 1.
     int cycle = 1;
 
-    /*
-     * schedules[cycle]
-     *
-     * contendrá las instrucciones que comienzan en ese
-     * ciclo.
-     *
-     * La posición 0 no se utiliza.
-     */
+    
     std::vector<std::vector<int>> schedules(1);
 
     while (
@@ -90,10 +73,7 @@ std::vector<std::vector<int>> schedule(
     ) {
         std::vector<int> ready;
 
-        // =================================================
-        // Buscar todas las instrucciones Ready.
-        // =================================================
-
+        // intruscciones ready
         for (
             int i = 0;
             i < instructionCount;
@@ -195,7 +175,7 @@ int scheduleLength(
     }
 
     /*
-     * Definición del laboratorio:
+     * Definición del lab:
      *
      * max(S(n) + lat(n)) - 1
      */
@@ -218,11 +198,6 @@ void printSchedule(
             << cycle
             << ": ";
 
-        /*
-         * Puede ocurrir que el schedule haya terminado de
-         * emitir instrucciones, pero alguna instrucción
-         * todavía esté completando su latencia.
-         */
         if (
             cycle >=
                 static_cast<int>(

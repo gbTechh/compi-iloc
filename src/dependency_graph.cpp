@@ -8,7 +8,7 @@
 
 namespace {
 
-// Añadir una arista.
+// Aristas
 
 void addEdge(
     std::vector<Instruction>& instructions,
@@ -355,7 +355,6 @@ void buildDependencyGraph(
 
                 // =========================================
                 // STORE -> LOAD
-                //
                 // delay = lat(store)
                 // =========================================
 
@@ -374,7 +373,6 @@ void buildDependencyGraph(
 
                 // =========================================
                 // LOAD -> STORE
-                //
                 // delay = 1
                 // =========================================
 
