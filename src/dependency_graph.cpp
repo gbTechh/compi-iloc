@@ -8,14 +8,7 @@
 
 namespace {
 
-// =========================================================
 // Añadir una arista.
-//
-// from ----delay----> to
-//
-// Si ya existe una arista entre los mismos nodos,
-// conservamos la restricción con mayor delay.
-// =========================================================
 
 void addEdge(
     std::vector<Instruction>& instructions,
@@ -81,7 +74,7 @@ void addEdge(
 // Determinar si dos accesos a memoria pueden entrar
 // en conflicto.
 //
-// Reglas del laboratorio:
+// Reglas del lab:
 //
 // load-load:
 //     nunca conflicto.
@@ -168,23 +161,10 @@ int computePriority(
 void buildDependencyGraph(
     std::vector<Instruction>& instructions
 ) {
-    /*
-     * Para cada registro:
-     *
-     * lastWriter[r]
-     *
-     * nos dice cuál fue la última instrucción que
-     * escribió r.
-     */
     std::unordered_map<std::string, int>
         lastWriter;
 
-    /*
-     * Para cada registro guardamos los lectores que han
-     * aparecido desde la última escritura.
-     *
-     * Esto nos permite crear WAR.
-     */
+ 
     std::unordered_map<
         std::string,
         std::vector<int>
@@ -233,9 +213,6 @@ void buildDependencyGraph(
             const int writerIndex =
                 writer->second;
 
-            /*
-             * RAW usa como delay la latencia del productor.
-             */
             addEdge(
                 instructions,
                 writerIndex,
@@ -318,10 +295,7 @@ void buildDependencyGraph(
             }
         }
 
-        // =================================================
-        // Ahora la instrucción actual se convierte en el
-        // último writer de sus registros destino.
-        // =================================================
+     
 
         for (
             const std::string& reg :
@@ -330,23 +304,12 @@ void buildDependencyGraph(
             lastWriter[reg] =
                 currentIndex;
 
-            /*
-             * Una nueva escritura comienza una nueva
-             * "versión" del registro.
-             */
+         
             readersSinceWrite[reg].clear();
         }
 
         // =================================================
         // Registrar las lecturas actuales.
-        //
-        // Si una instrucción lee Y escribe el mismo
-        // registro:
-        //
-        // add r1,r1 => r1
-        //
-        // no registramos la lectura después de haber
-        // actualizado lastWriter.
         // =================================================
 
         for (
@@ -430,9 +393,6 @@ void buildDependencyGraph(
 
                 // =========================================
                 // STORE -> STORE
-                //
-                // Debemos conservar el orden de las
-                // escrituras sobre memoria conflictiva.
                 // =========================================
 
                 else if (

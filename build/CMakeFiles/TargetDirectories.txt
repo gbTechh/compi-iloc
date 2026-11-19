@@ -1,3 +1,0 @@
-/home/enkit/2026/uni/uni-2026.2/compi/iloc/build/CMakeFiles/sched.dir
-/home/enkit/2026/uni/uni-2026.2/compi/iloc/build/CMakeFiles/edit_cache.dir
-/home/enkit/2026/uni/uni-2026.2/compi/iloc/build/CMakeFiles/rebuild_cache.dir
